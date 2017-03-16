@@ -7,12 +7,12 @@ prepare();
 
 function prepare(){
 
-    if(isset($_POST['user_id'])){
+    if(isset($_POST['subject'])){
 
-        $user_id=$_POST['user_id'];
+        $subject=$_POST['subject'];
         $database=new Database();
         header("Content-Type :application/json");
-        echo $database->getUserNotes($user_id);
+        echo $database->getUserNotes($subject);
 
      }
 

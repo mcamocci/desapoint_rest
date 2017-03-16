@@ -2,24 +2,20 @@
 
 require_once("Database.php");
 
-//the login process is executed//
+//the gets books or category is called//
 prepare();
 
 function prepare(){
 
-    if(isset($_POST['category'])){
+    if(isset($_POST['subject'])){
 
-        $category=$_POST['category'];
         $database=new Database();
+        $subject=$_POST['subject'];
         header("Content-Type :application/json");
-        echo $database->getArticles($category);
+        echo $database->getPastPapers($subject);
 
      }
 
-}
-
-
-
-
+   }
 
 ?>
