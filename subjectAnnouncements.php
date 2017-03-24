@@ -7,15 +7,19 @@ prepare();
 
 function prepare(){
 
-    if(isset($_POST['category'])){
+    if(isset($_POST['subject'])){
 
-        $category=$_POST['category'];
+        $subject=$_POST['subject'];
         $database=new Database();
         header("Content-Type :application/json");
-        echo $database->getArticles($category);
+        echo $database->getAllAnnouncements($subject);
 
      }
 
 }
+
+
+
+
 
 ?>

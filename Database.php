@@ -2,15 +2,17 @@
 
 class Database{
 
-
     var $connection;
 
     function __construct($host="localhost",$username="root",$password="haikarose",$database="desapoint"){
         $this->connection=new mysqli($host,$username,$password,$database);
     }
 
-
     public function logIn($username,$password){
+
+         //SELECT FirstName,username,fullname,phone,email,gender,users.User_id,image,
+         //university, college,year,semister,program from users JOIN user_settings on
+         //users.User_id=user_settings.User_id WHERE UserName='aa' and Password='aa' LIMIT 1
 
           $querry="SELECT FirstName,username,fullname,phone,email,gender,users.User_id,image from users
           WHERE UserName='$username' and Password='$password' LIMIT 1";
@@ -22,6 +24,55 @@ class Database{
           return "none";
     }
 
+    public function getTopics($subject_name){
+
+          $querry="SELECT id , topic as title , subject FROM subject_topic
+           WHERE subject='$subject_name'";
+
+           $topics=array();
+           $resultset=$this->connection->query($querry);
+           while($row=$resultset->fetch_assoc()){
+               $topics[]=$row;
+           }
+           if(count($topics)<1){
+             return "none";
+           }
+           return json_encode($topics);
+
+    }
+
+    public function getAllAnnouncements($subject_name){
+
+          $querry="";
+
+           $announcements=array();
+           $resultset=$this->connection->query($querry);
+           while($row=$resultset->fetch_assoc()){
+               $announcements[]=$row;
+           }
+           if(count($announcements)<1){
+             return "none";
+           }
+           return json_encode($assignments);
+
+    }
+
+    public function getAllAssignments($subject_name){
+
+          $querry="SELECT fullname as poster , file as url, date_collection as date_return ,message as description , head as title , subject FROM assignment_subject
+          WHERE assignment_subject.subject='$subject_name';";
+
+           $assignments=array();
+           $resultset=$this->connection->query($querry);
+           while($row=$resultset->fetch_assoc()){
+               $assignments[]=$row;
+           }
+           if(count($assignments)<1){
+             return "none";
+           }
+           return json_encode($assignments);
+
+    }
 
     public function getPastPapers($subject){
 
@@ -85,7 +136,6 @@ class Database{
             return "none";
           }
           return json_encode($usernotes);
-
     }
 
 
@@ -121,9 +171,6 @@ class Database{
       return json_encode($books);
 
     }
-
-
-
 
 
 }
