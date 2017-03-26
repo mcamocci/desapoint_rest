@@ -59,7 +59,8 @@ class Database{
 
     public function getAllAssignments($subject_name){
 
-          $querry="SELECT fullname as poster , file as url, date_collection as date_return ,message as description , head as title , subject FROM assignment_subject
+          $querry="SELECT fullname as poster , file as url, date_collection as date_return
+           ,message as description , head as title , subject FROM assignment_subject
           WHERE assignment_subject.subject='$subject_name';";
 
            $assignments=array();
@@ -171,6 +172,72 @@ class Database{
       return json_encode($books);
 
     }
+
+    public function getColleges($university){
+
+      $querry="SELECT id,college_name as name,university
+      FROM colleges WHERE university='$university';";
+      $colleges=array();
+      $resultset=$this->connection->query($querry);
+      while($row=$resultset->fetch_assoc()){
+         $colleges[]=$row;
+      }
+      if(count($colleges)<1){
+        return "none";
+      }
+      return json_encode($colleges);
+
+    }
+
+    public function getUniversities(){
+
+      $querry="SELECT * FROM universities";
+      $universities=array();
+      $resultset=$this->connection->query($querry);
+      while($row=$resultset->fetch_assoc()){
+         $universities[]=$row;
+      }
+      if(count($universities)<1){
+        return "none";
+      }
+      return json_encode($universities);
+
+    }
+
+
+    //the methods to be defined bellow are only
+    //concerning with the user registration
+
+
+    public function getAllUniversityCollege($university_name){
+
+    }
+
+    public function getAllCollegeCourse($college){
+
+    }
+
+
+    public function getAllCourseByYearAndSemister($course,$year,$semister){
+
+
+    }
+
+    // all methods should end here//
+
+
+    //codes concerning user registraion///
+
+
+
+    //they should end here//
+
+
+   //codes concerning user profile and settins;
+
+
+
+   //the end of profile and settings codes//
 
 
 }
