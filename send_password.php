@@ -7,11 +7,12 @@ prepare();
 
 function prepare(){
 
-  if(isset($_POST['email'])){
+  if(isset($_POST['fullname']) && isset($_POST["phone"])){
       $database=new Database();
-      $email=$_POST['email'];
+      $fullname=$_POST['fullname'];
+      $phone=$_POST['phone'];
       header("Content-Type :application/json");
-      echo $database->getPassword($email);
+      echo $database->getPassword($fullname,$phone);
   }
 }
 

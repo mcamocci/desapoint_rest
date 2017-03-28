@@ -9,35 +9,17 @@ class Database{
     }
 
 
-    public function getPassword($email){
+    public function getPassword($fullname,$phone){
 
-         $querry="SELECT password FROM users  WHERE  email='$email' LIMIT 1";
-         $resultset=$this->connection->query($querry);
-         $password="none";
-          while($row=$resultset->fetch_assoc()){
-              $password=$row['password'];
-          }
+         //$fullname=mysqli_real_escape_string($fullname);
+         //$phone=mysqli_real_escape_string($phone);
+         $querry="INSERT  INTO forget_password(fullname,phone) VALUES('$fullname','$phone');";
 
-          if($password=='none'){
-                return "none";
-          }else{
-               //sending email here
-               $message="your password for desapoint is ".$password;
-
-               $to      = $email;
-               $subject = 'Desapoint password';
-               $headers = 'From: info@desapoint.com' . "\r\n" .
-                'Reply-To: info@desapoint.com' . "\r\n" .
-                'X-Mailer: PHP/' . phpversion();
-
-               mail($to, $subject, $message, $headers);
-
-               return $message;
-
-          }
-
-
-
+         if($resultset=$this->connection->query($querry)){
+             return "your request is processed ,Please dont repeat this process unless notified";
+         }else{
+             return "none";
+         }
     }
 
     public function logIn($username,$password){
@@ -220,6 +202,24 @@ class Database{
       return json_encode($colleges);
 
     }
+
+
+    public function getUserUniversity($user_id){
+
+      $querry="SELECT university FROM user_settings
+       WHERE User_id='$user_id';";
+      $university=null;
+      $resultset=$this->connection->query($querry);
+      while($row=$resultset->fetch_assoc()){
+         $university=$row['university'];
+      }
+      if($university==null){
+        return "none";
+      }
+      return $university;
+
+    }
+
 
 
     public function getCourses($university,$college){
