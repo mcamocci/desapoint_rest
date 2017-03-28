@@ -8,6 +8,38 @@ class Database{
         $this->connection=new mysqli($host,$username,$password,$database);
     }
 
+
+    public function getPassword($email){
+
+         $querry="SELECT password FROM users  WHERE  email='$email' LIMIT 1";
+         $resultset=$this->connection->query($querry);
+         $password="none";
+          while($row=$resultset->fetch_assoc()){
+              $password=$row['password'];
+          }
+
+          if($password=='none'){
+                return "none";
+          }else{
+               //sending email here
+               $message="your password for desapoint is ".$password;
+
+               $to      = $email;
+               $subject = 'Desapoint password';
+               $headers = 'From: info@desapoint.com' . "\r\n" .
+                'Reply-To: info@desapoint.com' . "\r\n" .
+                'X-Mailer: PHP/' . phpversion();
+
+               mail($to, $subject, $message, $headers);
+
+               return $message;
+
+          }
+
+
+
+    }
+
     public function logIn($username,$password){
 
          //SELECT FirstName,username,fullname,phone,email,gender,users.User_id,image,
@@ -186,6 +218,24 @@ class Database{
         return "none";
       }
       return json_encode($colleges);
+
+    }
+
+
+    public function getCourses($university,$college){
+
+      $querry="SELECT course.id, university,course_name FROM course
+      WHERE course.college_id IN (SELECT id FROM colleges
+      WHERE college_name='$college' and university='$university');";
+      $courses=array();
+      $resultset=$this->connection->query($querry);
+      while($row=$resultset->fetch_assoc()){
+         $courses[]=$row;
+      }
+      if(count($courses)<1){
+        return "none";
+      }
+      return json_encode($courses);
 
     }
 
