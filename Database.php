@@ -3,8 +3,9 @@
 class Database{
 
     var $connection;
-
-    function __construct($host="localhost",$username="root",$password="haikarose",$database="desapoint"){
+    //$host="localhost",$username="root",$password="haikarose",$database="desapoint"
+    function __construct($host="localhost",
+    $username="desapoint",$password="ricrde0703037",$database="desapoin_udsis"){
         $this->connection=new mysqli($host,$username,$password,$database);
     }
 
