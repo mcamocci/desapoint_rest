@@ -1,3 +1,5 @@
+<?php
+
 class FileHandler{
 
 
@@ -149,3 +151,5 @@ $username,$file,$description,$subject,$name){
 
 
 }
+
+?>
