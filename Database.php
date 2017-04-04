@@ -4,8 +4,14 @@ class Database{
 
     var $connection;
     //$host="localhost",$username="root",$password="haikarose",$database="desapoint"
-    function __construct($host="localhost",
+
+  /*  function __construct($host="localhost",
     $username="desapoint",$password="ricrde0703037",$database="desapoin_udsis"){
+        $this->connection=new mysqli($host,$username,$password,$database);
+    }*/
+
+    function __construct($host="localhost",$username="root",
+    $password="haikarose",$database="desapoint"){
         $this->connection=new mysqli($host,$username,$password,$database);
     }
 
@@ -295,6 +301,29 @@ class Database{
 
     }
 
+    public function updateUserProfile($user_id,$fristName,$lastName,
+
+         $username,$phone,$email,$gender){
+
+         $fullname=$firstName." ".$lastName;
+
+         $querry="UPDATE users SET Firstname='$firstName' , LastName='$lastName' ,
+         phone='$phone',email='$email',Username='$username',
+         gender='$gender', fullname='$fullname' WHERE users.User_id='';";
+
+         $resultset=$this->connection->query($querry);
+
+         if($resultset){
+
+            return "success";
+
+         }else{
+
+            return "none";
+         }
+
+    }
+
 
 
     //they should end here//
@@ -309,8 +338,17 @@ class Database{
    }
 
 
-   public function deleteUserSubject($user_id,$subject_id){
+   public function removeUserSubject($user_id,$subject_id){
 
+     $querry="DELETE FROM user_subjects WHERE
+     subject_id='$subject_id' AND user_id='$user_id';";
+
+     $resultset=$this->connection->query($querry);
+     if($resultset){
+       return "successfully operation";
+     }else{
+       return "none";
+     }
    }
 
    public function addUserSubject($user_id,$subject_id){
