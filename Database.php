@@ -279,6 +279,22 @@ class Database{
 
     //codes concerning user registraion///
 
+    public function registerUser($fristName,$lastName,$username,$phone,
+    $email,$university,$college,$course,$year,$semester,$password){
+
+
+      //insert into users//
+
+      //insert into user settings//
+
+      //select user subjects and insert them into user subjects
+
+
+      //done
+
+
+    }
+
 
 
     //they should end here//
@@ -287,6 +303,19 @@ class Database{
    //codes concerning user profile and settins;
 
 
+   public function collegeUpdates($user_id,$college,$course,$year,$semester){
+
+
+   }
+
+
+   public function deleteUserSubject($user_id,$subject_id){
+
+   }
+
+   public function addUserSubject($user_id,$subject_id){
+
+   }
 
    //the end of profile and settings codes//
 
