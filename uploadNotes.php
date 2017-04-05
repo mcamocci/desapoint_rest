@@ -7,24 +7,30 @@
 
     function prepare(){
 
-        if(
+        if(isset($_POST['user_id']) &&
           isset($_FILE['file']) && isset($_POST['name'])
           && isset($_POST['description']) && isset($_POST['subject']))
         ){
 
+            $user_id=$_POST['user_id'];
             $file=$_FILE['file'];
             $subject=$_POST['subject'];
             $name=$_POST['name'];
             $description=$_POST['description'];
 
-
-            $file_path=FileHandler::uploadNotes();
-
-
+            $university="none";
+            $querry="SELECT * FROM user_settings WHERE user_id = '$user_id'";
             $database=new Database();
+            $resultset=$database->querry($querry);
+            $row=$resultset->fetch_array();
+            echo $row['university'];
+
+
+            $message=FileHandler::uploadNotes($user_id,$file,$subject,$name,$description);
+
             header("Content-Type :application/json");
-            echo $database->updateUserProfile($user_id,$fristName,$lastName,
-            $username,$phone,$email,$gender);
+            echo $message;
+
          }
     }
 

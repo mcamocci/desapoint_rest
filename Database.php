@@ -280,26 +280,127 @@ class Database{
 
     }
 
-    // all methods should end here//
+    ///////////////////////this function is for the user registration into the system////////////////
+    public function registerUser($firstName,$lastName,$gender,$username,$phone,
+        $email,$registration_number,$university,$college,$course,$year,$semester,$password){
 
+      if($this->userId($username,$password)==-1){
 
-    //codes concerning user registraion///
+        //insert into users//
+        $full_name=$firstName." ".$lastName;
+        $date=date('d/m/Y');
+        $queryInsertIntoUser="INSERT INTO users (FirstName,LastName,fullname,
+        registration_number,gender,phone,email,user_type,operation,date,image,
+        userName,password,class,subject,seminar,task,role,role_2,role_3,role_4,
+        role_5,role_6,role_7,role_8) VALUES ('$firstName','$lastName',
+        '$full_name','$registration_number','$gender','$phone','$email','Guest','activated','$date'
+        ,'','$username','$password','','','','','','','','','','','','');";
+        $resultset=$this->connection->query($queryInsertIntoUser);
 
-    public function registerUser($fristName,$lastName,$username,$phone,
-    $email,$university,$college,$course,$year,$semester,$password){
+        if($this->connection->error){
 
+           return "error were caught";
 
-      //insert into users//
+        }else{
 
-      //insert into user settings//
+                //continue to user_settings
+                $user_id=$this->userId($username,$password);
+                $thefullname=$firstName." ".$lastName;
+                $settingQuerry="INSERT INTO user_settings (User_id,university,college,program,year,semister,
+                full_name) VALUES('$user_id','$university','$college','$course','$year','$semester','$thefullname');";
 
-      //select user subjects and insert them into user subjects
+                $settingsResultset=$this->connection->query($settingQuerry);
 
+          if($this->connection->error){
+                return "error were caught";
+          }else{
+                //continue with user_subjects//
+                $user_id=$this->userId($username,$password);
+                $fullname=$firstName." ".$lastName;
 
-      //done
+                $userSubjectsQuerry="INSERT INTO user_subjects (user_id,username,fullname,year,collage,programe,subject,subject_code,subject_id,specialization)
+                SELECT '$user_id','$username','$fullname','$year','$college','$course',subjects.subject,subject_code,subjects.id,'' FROM
+                subjects WHERE year='$year' AND semister='$semester' AND university='$university';";
 
+                $userSubjectsResultset=$this->connection->query($userSubjectsQuerry);
+
+                if($this->connection->error){
+                      echo $this->connection->error;
+                      return "error were caught";
+                }else{
+                      return "success";
+                }
+          }
+        }
+
+      }else{
+
+        return "Your username is not allowed , please try to change it.";
+
+      }
 
     }
+
+    ///////////////////////////////////update the user course information///////////////////////////////////////////////////////
+
+    public function updateCourseInfo($user_id,$username,$fullname,$university,$college,
+    $course,$year,$semester){
+          $querryString="UPDATE user_settings SET college='$college',program='$course',year='$year',semister='$semester'
+          WHERE user_id='$user_id'";
+          $updateResult=$this->connection->query($querryString);
+
+          if($this->connection->error){
+                return "please call desapoint, to report this problem";
+          }else{
+                //continue with user_subjects//
+                $deletePresentQuerry="DELETE FROM user_subjects WHERE user_id='$user_id'";
+                $deleteResult=$this->connection->query($deletePresentQuerry);
+                if($this->connection->error){
+                       return $this->connection->error;
+                }
+
+                //insert subject into the user_subjects Table
+                $userSubjectsQuerry="INSERT INTO user_subjects (user_id,username,fullname,year,collage,programe,subject,subject_code,subject_id,specialization)
+                SELECT '$user_id','$username','$fullname','$year','$college','$course',subjects.subject,subject_code,subjects.id,'' FROM
+                subjects WHERE year='$year' AND semister='$semester' AND university='$university';";
+                $userSubjectsResultset=$this->connection->query($userSubjectsQuerry);
+
+                if($this->connection->error){
+                      return "something is wrong please user desapoint.com";
+                }else{
+                     return "success";
+                }
+
+          }
+
+    }
+
+
+    //this helper method//
+    private function userId($username,$password){
+
+      $userIdQuerry="SELECT * From users WHERE username='$username' AND password='$password'";
+      $userIdQuerryResults=$this->connection->query($userIdQuerry);
+
+      $user_id=-1;
+      $userIdQuerryRow=$userIdQuerryResults->fetch_array();
+      $userIdQuerryId=$userIdQuerryRow['User_id'];
+
+      if($this->connection->error){
+         return "error were caught";
+      }else{
+
+          if($userIdQuerryId!=null){
+               $user_id=$userIdQuerryId;
+               return $user_id;
+          }else{
+               return $user_id;
+          }
+      }
+    }
+
+
+
 
     public function updateUserProfile($user_id,$fristName,$lastName,
 

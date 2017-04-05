@@ -1,20 +1,27 @@
 <?php
 
+require_once("Database.php");
+
 class FileHandler{
 
 
-public static function uploadNotes($firstName,$lastName,
-$username,$file,$description,$subject,$name){
+public static function uploadNotes($user_id,$username,
+$file,$description,$subject,$name){
 
         $user_name=$username;
         $subject=$subject;
-        $notes_name=mysql_escape_string($_POST['notes_name']);
+        $notes_name=mysql_escape_string($name);
         $date2=date('y-m-d');
         $notes_category=$category;
         $description=mysql_escape_string($description);
 
 
-        $university=$_POST['university'];
+        $query="SELECT * FROM user_settings WHERE User_id = '$user_id'";
+        $database=new Database();
+        $resultset=$database->connection->query($query);
+        $row=$resultset->fetch_array();
+        $university=$row['university'];
+
 
         /* GETING ACADEMIC YEAR */
         $result_get2=mysql_query("select * from  academic_year");
@@ -34,29 +41,33 @@ $username,$file,$description,$subject,$name){
         $notes_upload_name= addslashes($new_id.$_FILES['notes_upload']['name']);
         $notes_upload_size= getimagesize($_FILES['notes_upload']['tmp_name']);
 
-        move_uploaded_file($file["tmp_name"],"notes/" .$new_id. $_FILES["notes_upload"]["name"]);
-        $location="notes/" .$new_id. $_FILES["notes_upload"]["name"];
+        if(move_uploaded_file(
+          $file["tmp_name"],"notes/" .$new_id. $_FILES["notes_upload"]["name"])){
 
-        $result=mysql_query("select * from subjects where subject='$subject'");
-        $row=mysql_fetch_array($result);
-        $subject_id=$row['id'];
-        $notes_number=$row['notes_number'];
+            $location="notes/" .$new_id. $_FILES["notes_upload"]["name"];
+            $result=mysql_query("select * from subjects where subject='$subject'");
+            $row=mysql_fetch_array($result);
+            $subject_id=$row['id'];
+            $notes_number=$row['notes_number'];
+            $notes_number2=$notes_number+1;
+            mysql_query("insert into notes (subject,notes_name,description,notes_upload,user_name,status,university,notes_category,date,notes_year)
+                  values('$subject','$notes_name','$description','$notes_upload_name','$user_name','Activated','$university','$notes_category','$date2','$academic_year')") or die(mysql_error());
+            mysql_query("update subjects set notes_number='$notes_number2' where id='$subject_id'")or die(mysql_query);
+            mysql_query("INSERT INTO history (data,action,date,user)VALUES('$notes_name', 'Added New Notes', NOW(),'$user_name')")or die(mysql_error());
 
-        $notes_number2=$notes_number+1;
+                return "file uploaded";
 
+          }else{
 
-        mysql_query("insert into notes (subject,notes_name,description,notes_upload,user_name,status,university,notes_category,date,notes_year)
-              values('$subject','$notes_name','$description','$notes_upload_name','$user_name','Activated','$university','$notes_category','$date2','$academic_year')") or die(mysql_error());
+                return "none";
 
-        mysql_query("update subjects set notes_number='$notes_number2' where id='$subject_id'")or die(mysql_query);
-
-        mysql_query("INSERT INTO history (data,action,date,user)VALUES('$notes_name', 'Added New Notes', NOW(),'$user_name')")or die(mysql_error());
+          }
 
 
 
   }
 
-  public static function uploadArticle(){
+  public static function uploadArticle($username,$subject,$university,$writter,$article_name,$article_notes){
 
               $user_name=$_POST['user_name'];
             	$subject=$_POST['subject'];
@@ -64,36 +75,48 @@ $username,$file,$description,$subject,$name){
             	$article_name=$_POST['article_name'];
             	//$article_file=$_POST['article_file'];
             	$article_notes=$_POST['article_notes'];
-            	$university=$_POST['university'];
 
     	        if($_FILES['article_file']['tmp_name']!=''){
     					$article_file= addslashes(file_get_contents($_FILES['article_file']['tmp_name']));
     					$article_file_name= addslashes($_FILES['article_file']['name']);
     					$article_file_size= getimagesize($_FILES['article_file']['tmp_name']);
 
-    					move_uploaded_file($_FILES["article_file"]["tmp_name"],"articles/" . $_FILES["article_file"]["name"]);
-    					$location="articles/" . $_FILES["article_file"]["name"];
+              $location="none";
+
+              if(move_uploaded_file($_FILES["article_file"]["tmp_name"],"articles/" . $_FILES["article_file"]["name"])){
+                $location="articles/" . $_FILES["article_file"]["name"];
+
+                $result=mysql_query("select * from subjects where subject='$subject'");
+              	$row=mysql_fetch_array($result);
+              	$subject_id=$row['id'];
+              	$number_articles=$row['number_articles'];
+
+                $number_articles2=$number_articles+1;
+
+
+              	mysql_query("insert into aticles (subject,writter,article_name,article_notes,article_file,user_name,status,university)
+              				values('$subject','$writter','$article_name','$article_notes','$article_file_name','$user_name','Activated','$university')") or die(mysql_error());
+
+      					mysql_query("update subjects set
+                number_articles='$number_articles2'
+                where id='$subject_id'")or die(mysql_query);
+
+
+                mysql_query("INSERT INTO history (data,action,date,user)VALUES('$article_name', 'Added New Article', NOW(),'$user_name')")or die(mysql_error());
+
+                return "successfully uploaded";
+
+              }else{
+
+                return "none";
+
+              }
+
     					}else{
+
     					$article_file_name='';
+
     					}
-
-            	$result=mysql_query("select * from subjects where subject='$subject'");
-            	$row=mysql_fetch_array($result);
-            	$subject_id=$row['id'];
-            	$number_articles=$row['number_articles'];
-
-              $number_articles2=$number_articles+1;
-
-
-            	mysql_query("insert into aticles (subject,writter,article_name,article_notes,article_file,user_name,status,university)
-            				values('$subject','$writter','$article_name','$article_notes','$article_file_name','$user_name','Activated','$university')") or die(mysql_error());
-
-    											mysql_query("update subjects set
-              number_articles='$number_articles2'
-              where id='$subject_id'")or die(mysql_query);
-
-
-              mysql_query("INSERT INTO history (data,action,date,user)VALUES('$article_name', 'Added New Article', NOW(),'$user_name')")or die(mysql_error());
 
 
 
