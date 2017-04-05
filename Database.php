@@ -280,7 +280,7 @@ class Database{
 
     }
 
-    ///////////////////////this function is for the user registration into the system////////////////
+    ///////////////////////this function is for the user registration into the system/////////////////////
     public function registerUser($firstName,$lastName,$gender,$username,$phone,
         $email,$registration_number,$university,$college,$course,$year,$semester,$password){
 
@@ -298,9 +298,7 @@ class Database{
         $resultset=$this->connection->query($queryInsertIntoUser);
 
         if($this->connection->error){
-
            return "error were caught";
-
         }else{
 
                 //continue to user_settings
@@ -355,12 +353,14 @@ class Database{
                 //continue with user_subjects//
                 $deletePresentQuerry="DELETE FROM user_subjects WHERE user_id='$user_id'";
                 $deleteResult=$this->connection->query($deletePresentQuerry);
+
                 if($this->connection->error){
                        return $this->connection->error;
                 }
 
                 //insert subject into the user_subjects Table
-                $userSubjectsQuerry="INSERT INTO user_subjects (user_id,username,fullname,year,collage,programe,subject,subject_code,subject_id,specialization)
+                $userSubjectsQuerry="INSERT INTO user_subjects (user_id,username,fullname,year,
+                  collage,programe,subject,subject_code,subject_id,specialization)
                 SELECT '$user_id','$username','$fullname','$year','$college','$course',subjects.subject,subject_code,subjects.id,'' FROM
                 subjects WHERE year='$year' AND semister='$semester' AND university='$university';";
                 $userSubjectsResultset=$this->connection->query($userSubjectsQuerry);
@@ -399,9 +399,6 @@ class Database{
       }
     }
 
-
-
-
     public function updateUserProfile($user_id,$fristName,$lastName,
 
          $username,$phone,$email,$gender){
@@ -424,19 +421,6 @@ class Database{
          }
 
     }
-
-
-
-    //they should end here//
-
-
-   //codes concerning user profile and settins;
-
-
-   public function collegeUpdates($user_id,$college,$course,$year,$semester){
-
-
-   }
 
 
    public function removeUserSubject($user_id,$subject_id){
