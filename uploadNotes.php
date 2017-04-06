@@ -1,36 +1,38 @@
 <?php
 
     require_once("Database.php");
+    require_once("FileHandler.php");
+
+
 
     //the login process is executed//
     prepare();
 
+
     function prepare(){
 
+          $database=new Database();
+          $connection=$database->connection;
+
         if(isset($_POST['user_id']) &&
-          isset($_FILE['file']) && isset($_POST['name'])
-          && isset($_POST['description']) && isset($_POST['subject']))
+          isset($_FILES['notes_upload']) && isset($_POST['name'])
+          && isset($_POST['description']) && isset($_POST['subject'])&&
+          isset($_POST['username'])
         ){
 
-            $user_id=$_POST['user_id'];
-            $file=$_FILE['file'];
-            $subject=$_POST['subject'];
-            $name=$_POST['name'];
-            $description=$_POST['description'];
-
-            $university="none";
-            $querry="SELECT * FROM user_settings WHERE user_id = '$user_id'";
-            $database=new Database();
-            $resultset=$database->querry($querry);
-            $row=$resultset->fetch_array();
-            echo $row['university'];
+            $user_id=mysqli_real_escape_string($connection,$_POST['user_id']);
+            $file=$_FILES['notes_upload'];
+            $subject=mysqli_real_escape_string($connection,$_POST['subject']);
+            $name=mysqli_real_escape_string($connection,$_POST['name']);
+            $username=mysqli_real_escape_string($connection,$_POST['username']);
+            $description=mysqli_real_escape_string($connection,$_POST['description']);
 
 
-            $message=FileHandler::uploadNotes($user_id,$file,$subject,$name,$description);
-
+            echo $message=FileHandler::uploadNotes($user_id,$username,$file,$description,$subject,$name);;
             header("Content-Type :application/json");
-            echo $message;
 
+         }else{
+            echo "not set";
          }
     }
 

@@ -8,62 +8,77 @@ class FileHandler{
 public static function uploadNotes($user_id,$username,
 $file,$description,$subject,$name){
 
-        $user_name=$username;
-        $subject=$subject;
-        $notes_name=mysql_escape_string($name);
-        $date2=date('y-m-d');
-        $notes_category=$category;
-        $description=mysql_escape_string($description);
+            $database=new Database();
+            $connection=$database->connection;
 
 
-        $query="SELECT * FROM user_settings WHERE User_id = '$user_id'";
-        $database=new Database();
-        $resultset=$database->connection->query($query);
-        $row=$resultset->fetch_array();
-        $university=$row['university'];
+            $categoryQuerry="SELECT * FROM cr WHERE User_id='$user_id'";
+
+            $categoryQuerryResulset=$connection->query($categoryQuerry);
+            $rowReturned=$categoryQuerryResulset->num_rows;
+
+            if($rowReturned==0){
+                $category="Other Notes by ".$username;
+            }else{
+                $category="Official Notes From CR ".$username;
+            }
+
+            $user_name=$username;
+            $subject=$subject;
+            $notes_name=$name;
+            $date2=date('y-m-d');
+            $notes_category=$category;
+            $description=$description;
 
 
-        /* GETING ACADEMIC YEAR */
-        $result_get2=mysql_query("select * from  academic_year");
-        $get_row2=mysql_fetch_array($result_get2);
-        $academic_year=$get_row2['academic_year'];
+            $query="SELECT * FROM user_settings WHERE User_id = '$user_id'";
+            $database=new Database();
+            $resultset=$database->connection->query($query);
+            $row=$resultset->fetch_array();
+            $university=$row['university'];
 
 
-        /* GETING IDS FOR MAKING DIFFERENCE IN CONTENTS */
-        $result_get=mysql_query("select * from notes ORDER BY `id` DESC");
-        $get_row=mysql_fetch_array($result_get);
-        $last_id=$get_row['id'];
-        $next_id=$last_id+1;
-        $new_id='DESAPOINT_'.$next_id.'_';
+            /* GETING ACADEMIC YEAR */
+            $result_get2=$database->connection->query("select * from  academic_year");
+            $get_row2=$result_get2->fetch_array();
+            $academic_year=$get_row2['academic_year'];
 
 
-        $notes_upload= addslashes(file_get_contents($_FILES['notes_upload']['tmp_name']));
-        $notes_upload_name= addslashes($new_id.$_FILES['notes_upload']['name']);
-        $notes_upload_size= getimagesize($_FILES['notes_upload']['tmp_name']);
+            /* GETING IDS FOR MAKING DIFFERENCE IN CONTENTS */
+            $result_get=$database->connection->query("select * from notes ORDER BY `id` DESC");
+            $get_row=$result_get->fetch_array();
+            $last_id=$get_row['id'];
+            $next_id=$last_id+1;
+            $new_id='DESAPOINT_'.$next_id.'_';
 
-        if(move_uploaded_file(
-          $file["tmp_name"],"notes/" .$new_id. $_FILES["notes_upload"]["name"])){
 
-            $location="notes/" .$new_id. $_FILES["notes_upload"]["name"];
-            $result=mysql_query("select * from subjects where subject='$subject'");
-            $row=mysql_fetch_array($result);
-            $subject_id=$row['id'];
-            $notes_number=$row['notes_number'];
-            $notes_number2=$notes_number+1;
-            mysql_query("insert into notes (subject,notes_name,description,notes_upload,user_name,status,university,notes_category,date,notes_year)
-                  values('$subject','$notes_name','$description','$notes_upload_name','$user_name','Activated','$university','$notes_category','$date2','$academic_year')") or die(mysql_error());
-            mysql_query("update subjects set notes_number='$notes_number2' where id='$subject_id'")or die(mysql_query);
-            mysql_query("INSERT INTO history (data,action,date,user)VALUES('$notes_name', 'Added New Notes', NOW(),'$user_name')")or die(mysql_error());
+            $notes_upload= addslashes(file_get_contents($_FILES['notes_upload']['tmp_name']));
+            //$notes_upload= addslashes(file_get_contents($file['tmp_name']));
 
-                return "file uploaded";
+            $notes_upload_name= addslashes($new_id.$_FILES['notes_upload']['name']);
+            $notes_upload_size= getimagesize($_FILES['notes_upload']['tmp_name']);
 
-          }else{
+            if(move_uploaded_file(
+              $file["tmp_name"],"notes/" .$new_id. $_FILES["notes_upload"]["name"])){
 
-                return "none";
+                    $location="notes/" .$new_id. $_FILES["notes_upload"]["name"];
+                    $result=$database->connection->query("select * from subjects where subject='$subject'");
+                    $row=$result->fetch_array();
+                    $subject_id=$row['id'];
+                    $notes_number=$row['notes_number'];
+                    $notes_number2=$notes_number+1;
+                    $database->connection->query("insert into notes (subject,notes_name,description,notes_upload,user_name,status,university,
+                    notes_category,date,notes_year) values ('$subject','$notes_name','$description','$notes_upload_name','$user_name'
+                    ,'Activated','$university','$notes_category','$date2','$academic_year')");
 
+                    $database->connection->query("update subjects set notes_number='$notes_number2' where id='$subject_id'");
+                    $database->connection->query("INSERT INTO history (data,action,date,user)VALUES('$notes_name', 'Added New Notes', NOW(),'$user_name')");
+
+                    return "file uploaded";
+
+              }else{
+                    return "none";
           }
-
-
 
   }
 
