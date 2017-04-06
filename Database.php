@@ -370,7 +370,6 @@ class Database{
                 }else{
                      return "success";
                 }
-
           }
 
     }
@@ -422,7 +421,7 @@ class Database{
 
     }
 
-
+   /////////this function is a service function for deleting user subjects//////
    public function removeUserSubject($user_id,$subject_id){
 
      $querry="DELETE FROM user_subjects WHERE
@@ -436,7 +435,37 @@ class Database{
      }
    }
 
-   public function addUserSubject($user_id,$subject_id){
+   /////////this function is a service adding subject to user subjects table////
+   public function addUserSubject($user_id,$username,$subject_id){
+
+         $fullnameQuerry="SELECT * FROM user_settings WHERE user_id='$user_id'";
+         $fullnameResulset=$this->connection->query($fullnameQuerry);
+         $fullnameRow=$fullnameResulset->fetch_array();
+
+         if($this->connection->error){
+           return "none";
+         }
+
+         $fullname=$fullnameRow['full_name'];
+         $university=$fullnameRow['university'];
+         $college=$fullnameRow["college"];
+         $year=$fullnameRow["year"];
+         $semester=$fullnameRow["semister"];
+
+
+         $SubjectsInsertQuerry="INSERT INTO user_subjects (user_id,username,fullname,year,collage,programe,
+           subject,subject_code,subject_id,specialization)
+         SELECT '$user_id','$username','$fullname','$year','$college',subjects.programe,subjects.subject,subject_code,
+         subjects.id,'' FROM  subjects WHERE subjects.id ='$subject_id';";
+
+         $userSubjectsResultset=$this->connection->query($SubjectsInsertQuerry);
+
+         if($this->connection->error){
+               echo $this->connection->error;
+               return "error were caught";
+         }else{
+               return "success";
+         }
 
    }
 
