@@ -111,6 +111,21 @@ class Database{
           return json_encode($pastpapers);
     }
 
+    public function articleCategory(){
+
+          $querry="SELECT * FROM books_category;";
+
+          $resultset=$this->connection->query($querry);
+          $bookscats=array();
+          while($row=$resultset->fetch_assoc()){
+              $bookscats[]=$row;
+          }
+          if(count($bookscats)<1){
+            return "none";
+          }
+          return json_encode($bookscats);
+   }
+
     public function articleBookCategory(){
 
           $querry="SELECT * FROM books_category;";
@@ -146,7 +161,7 @@ class Database{
 
     public function getUserSubjects($id){
 
-          $querry="SELECT  user_subjects.id,subject,user_subjects.subject_code
+          $querry="SELECT  subject_id as id,subject,user_subjects.subject_code
           from user_subjects where user_id='$id';";
 
           $resultset=$this->connection->query($querry);
