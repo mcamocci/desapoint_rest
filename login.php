@@ -9,9 +9,12 @@
 
         if(isset($_POST['username']) && isset($_POST['password'])){
 
-            $username=$_POST['username'];
-            $password=$_POST['password'];
             $database=new Database();
+            $connection=$database->connection;
+
+            $username=mysqli_real_escape_string($connection,$_POST['username']);
+            $password=mysqli_real_escape_string($connection,$_POST['password']);
+
             header("Content-Type :application/json");
             echo $database->logIn($username,$password);
 

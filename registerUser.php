@@ -14,21 +14,24 @@
         && isset($_POST['year'])&& isset($_POST['semester'])
         && isset($_POST['registration_number'])&& isset($_POST['username'])){
 
-            $firstName=$_POST['firstName'];
-            $lastName=$_POST['lastName'];
-            $username=$_POST['username'];
-            $phone=$_POST['phone'];
-            $email=$_POST['email'];
-            $university=$_POST['university'];
-            $college=$_POST['college'];
-            $course=$_POST['course'];
-            $registration_number=$_POST['registration_number'];
-            $year=$_POST['year'];
-            $gender=$_POST['gender'];
-            $semester=$_POST['semester'];
-            $password=$_POST['password'];
-
             $database=new Database();
+            $connection=$database->connection;
+
+            $firstName=mysqli_real_escape_string($connection,$_POST['firstName']);
+            $lastName=mysqli_real_escape_string($connection,$_POST['lastName']);
+            $username=mysqli_real_escape_string($connection,$_POST['username']);
+            $phone=mysqli_real_escape_string($connection,$_POST['phone']);
+            $email=mysqli_real_escape_string($connection,$_POST['email']);
+            $university=mysqli_real_escape_string($connection,$_POST['university']);
+            $college=mysqli_real_escape_string($connection,$_POST['college']);
+            $course=mysqli_real_escape_string($connection,$_POST['course']);
+            $registration_number=mysqli_real_escape_string($connection,$_POST['registration_number']);
+            $year=mysqli_real_escape_string($connection,$_POST['year']);
+            $gender=mysqli_real_escape_string($connection,$_POST['gender']);
+            $semester=mysqli_real_escape_string($connection,$_POST['semester']);
+            $password=mysqli_real_escape_string($connection,$_POST['password']);
+
+
             header("Content-Type :application/json");
             echo $database->registerUser($firstName,$lastName,$gender,$username,$phone,
             $email,$registration_number,$university,$college,$course,$year,$semester,$password);

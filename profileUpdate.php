@@ -14,15 +14,17 @@
           isset($_POST['user_id'])
         ){
 
-            $user_id=$_POST['user_id'];
-            $firstName=$_POST['FirstName'];
-            $lastName=$_POST['lastName'];
-            $username=$_POST['username'];
-            $phone=$_POST['phone'];
-            $email=$_POST['email'];
-            $gender=$_POST['gender'];
-
             $database=new Database();
+            $connection=$database->connection;
+
+            $user_id=mysqli_real_escape_string($connection,$_POST['user_id']);
+            $firstName=mysqli_real_escape_string($connection,$_POST['FirstName']);
+            $lastName=mysqli_real_escape_string($connection,$_POST['lastName']);
+            $username=mysqli_real_escape_string($connection,$_POST['username']);
+            $phone=mysqli_real_escape_string($connection,$_POST['phone']);
+            $email=mysqli_real_escape_string($connection,$_POST['email']);
+            $gender=mysqli_real_escape_string($connection,$_POST['gender']);
+
             header("Content-Type :application/json");
             echo $database->updateUserProfile($user_id,$fristName,$lastName,
             $username,$phone,$email,$gender);
