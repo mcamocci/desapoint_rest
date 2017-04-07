@@ -12,7 +12,7 @@
         isset($_POST['email']) && isset($_POST['university']) &&
         isset($_POST['password']) && isset($_POST['college']) && isset($_POST['course'])
         && isset($_POST['year'])&& isset($_POST['semester'])
-        && isset($_POST['registration_number'])&& isset($_POST['registration_number'])){
+        && isset($_POST['registration_number'])&& isset($_POST['username'])){
 
             $firstName=$_POST['firstName'];
             $lastName=$_POST['lastName'];
@@ -32,6 +32,8 @@
             header("Content-Type :application/json");
             echo $database->registerUser($firstName,$lastName,$gender,$username,$phone,
             $email,$registration_number,$university,$college,$course,$year,$semester,$password);
+         }else{
+           echo "some not set";
          }
     }
 

@@ -26,6 +26,8 @@
             header("Content-Type :application/json");
             echo $database->updateCourseInfo($user_id,$username,$fullname,
             $university,$college,$course,$year,$semester);
+         }else{
+           echo "some not set";
          }
     }
 

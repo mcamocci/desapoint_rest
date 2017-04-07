@@ -130,7 +130,7 @@ class Database{
     public function getUserNotes($subject){
 
           $querry="SELECT notes_name as name,description,notes_upload as file_url
-           FROM notes WHERE notes.subject='$subject';";
+           ,notes_category as status FROM notes WHERE notes.subject='$subject' ORDER BY id DESC;";
 
           $resultset=$this->connection->query($querry);
           $usernotes=array();
@@ -164,7 +164,7 @@ class Database{
     public function getArticles($category){
 
           $querry="SELECT article_name as name,article_notes as description,article_file as
-           file_url FROM aticles WHERE aticles.subject='$category';";
+           file_url ,status FROM aticles WHERE aticles.subject='$category' ORDER BY id DESC;";
 
           $resultset=$this->connection->query($querry);
           $articles=array();
@@ -181,7 +181,7 @@ class Database{
     public function getBooks($category){
 
       $querry="SELECT book_name as name,description,uploaded_book as file_url
-      FROM books WHERE books.book_category='$category' order by id desc;";
+      ,status FROM books WHERE books.book_category='$category' ORDER BY id DESC;";
       $books=array();
       $resultset=$this->connection->query($querry);
       while($row=$resultset->fetch_assoc()){
@@ -316,9 +316,10 @@ class Database{
                 $user_id=$this->userId($username,$password);
                 $fullname=$firstName." ".$lastName;
 
-                $userSubjectsQuerry="INSERT INTO user_subjects (user_id,username,fullname,year,collage,programe,subject,subject_code,subject_id,specialization)
+                $userSubjectsQuerry="INSERT INTO user_subjects (user_id,username,fullname,year,collage,programe,subject,subject_code,
+                  subject_id,specialization)
                 SELECT '$user_id','$username','$fullname','$year','$college','$course',subjects.subject,subject_code,subjects.id,'' FROM
-                subjects WHERE year='$year' AND semister='$semester' AND university='$university';";
+                subjects WHERE year='$year' AND programe='$course' AND semister='$semester' AND university='$university';";
 
                 $userSubjectsResultset=$this->connection->query($userSubjectsQuerry);
 
@@ -362,7 +363,7 @@ class Database{
                 $userSubjectsQuerry="INSERT INTO user_subjects (user_id,username,fullname,year,
                   collage,programe,subject,subject_code,subject_id,specialization)
                 SELECT '$user_id','$username','$fullname','$year','$college','$course',subjects.subject,subject_code,subjects.id,'' FROM
-                subjects WHERE year='$year' AND semister='$semester' AND university='$university';";
+                subjects WHERE year='$year' AND programe='$course' AND semister='$semester' AND university='$university';";
                 $userSubjectsResultset=$this->connection->query($userSubjectsQuerry);
 
                 if($this->connection->error){
@@ -420,6 +421,27 @@ class Database{
          }
 
     }
+
+
+/////////////this function is for searching subjects  subjects//////////////////
+
+    public function searchSubject($keyword){
+
+          $querry="SELECT  id,subject,subject_code FROM subjects WHERE
+          subject_code LIKE '%$keyword%' OR subject LIKE '%$keyword%'";
+
+          $resultset=$this->connection->query($querry);
+          $usersubjects=array();
+          while($row=$resultset->fetch_assoc()){
+                $usersubjects[]=$row;
+          }
+          if(count($usersubjects)<1){
+            return "none";
+          }
+          return json_encode($usersubjects);
+    }
+
+
 
    /////////this function is a service function for deleting user subjects//////
    public function removeUserSubject($user_id,$subject_id){
