@@ -334,7 +334,7 @@ class Database{
                 $userSubjectsQuerry="INSERT INTO user_subjects (user_id,username,fullname,year,collage,programe,subject,subject_code,
                   subject_id,specialization)
                 SELECT '$user_id','$username','$fullname','$year','$college','$course',subjects.subject,subject_code,subjects.id,'' FROM
-                subjects WHERE year='$year' AND programe='$course' AND semister='$semester' AND university='$university';";
+                subjects WHERE status='Core' AND year='$year' AND programe='$course' AND semister='$semester' AND university='$university';";
 
                 $userSubjectsResultset=$this->connection->query($userSubjectsQuerry);
 
@@ -378,7 +378,7 @@ class Database{
                 $userSubjectsQuerry="INSERT INTO user_subjects (user_id,username,fullname,year,
                   collage,programe,subject,subject_code,subject_id,specialization)
                 SELECT '$user_id','$username','$fullname','$year','$college','$course',subjects.subject,subject_code,subjects.id,'' FROM
-                subjects WHERE year='$year' AND programe='$course' AND semister='$semester' AND university='$university';";
+                subjects WHERE year='$year' AND status='Core' AND programe='$course' AND semister='$semester' AND university='$university';";
                 $userSubjectsResultset=$this->connection->query($userSubjectsQuerry);
 
                 if($this->connection->error){
@@ -414,15 +414,23 @@ class Database{
       }
     }
 
-    public function updateUserProfile($user_id,$fristName,$lastName,
+    public function updateUserProfile(){
 
-         $username,$phone,$email,$gender){
+        $database=new Database();
+        $connection=$database->connection;
+
+        $user_id=mysqli_real_escape_string($connection,$_POST['user_id']);
+        $firstName=mysqli_real_escape_string($connection,$_POST['firstName']);
+        $lastName=mysqli_real_escape_string($connection,$_POST['lastName']);
+        $phone=mysqli_real_escape_string($connection,$_POST['phone']);
+        $email=mysqli_real_escape_string($connection,$_POST['email']);
+        $gender=mysqli_real_escape_string($connection,$_POST['gender']);
 
          $fullname=$firstName." ".$lastName;
 
          $querry="UPDATE users SET Firstname='$firstName' , LastName='$lastName' ,
-         phone='$phone',email='$email',Username='$username',
-         gender='$gender', fullname='$fullname' WHERE users.User_id='';";
+         phone='$phone',email='$email', gender='$gender', fullname='$fullname'
+          WHERE users.User_id='$user_id';";
 
          $resultset=$this->connection->query($querry);
 

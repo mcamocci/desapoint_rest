@@ -82,8 +82,12 @@ $file,$description,$subject,$name){
 
   }
 
-  public static function uploadArticle($username,$subject,$university,$writter,$article_name,$article_notes){
+  public static function uploadArticle(){
 
+              $database=new Database();
+              $connection=$database->connection;
+
+              $user_id=$_POST['user_id'];
               $user_name=$_POST['user_name'];
             	$subject=$_POST['subject'];
             	$writter=$_POST['writter'];
@@ -91,7 +95,11 @@ $file,$description,$subject,$name){
             	//$article_file=$_POST['article_file'];
             	$article_notes=$_POST['article_notes'];
 
-    	        if($_FILES['article_file']['tmp_name']!=''){
+              $resultUniversity=$connection->query("select * from user_settings where User_id='$user_id'");
+              $rowUniversity=$resultUniversity->fetch_array();
+              $university=$rowUniversity['university'];
+
+    	        if(isset($_FILES['article_file']['tmp_name'])){
     					$article_file= addslashes(file_get_contents($_FILES['article_file']['tmp_name']));
     					$article_file_name= addslashes($_FILES['article_file']['name']);
     					$article_file_size= getimagesize($_FILES['article_file']['tmp_name']);
@@ -100,24 +108,15 @@ $file,$description,$subject,$name){
 
               if(move_uploaded_file($_FILES["article_file"]["tmp_name"],"articles/" . $_FILES["article_file"]["name"])){
                 $location="articles/" . $_FILES["article_file"]["name"];
+                $date=date('y-m-d');
 
-                $result=mysql_query("select * from subjects where subject='$subject'");
-              	$row=mysql_fetch_array($result);
-              	$subject_id=$row['id'];
-              	$number_articles=$row['number_articles'];
+              	$connection->query("insert into aticles (subject,writter,article_name,article_notes,article_file,date,user_name,status,university)
+              				values('$subject','$writter','$article_name','$article_notes','$article_file_name','$date','$user_name','Activated','$university')");
+                echo $connection->error;
+                echo "before";
 
-                $number_articles2=$number_articles+1;
-
-
-              	mysql_query("insert into aticles (subject,writter,article_name,article_notes,article_file,user_name,status,university)
-              				values('$subject','$writter','$article_name','$article_notes','$article_file_name','$user_name','Activated','$university')") or die(mysql_error());
-
-      					mysql_query("update subjects set
-                number_articles='$number_articles2'
-                where id='$subject_id'")or die(mysql_query);
-
-
-                mysql_query("INSERT INTO history (data,action,date,user)VALUES('$article_name', 'Added New Article', NOW(),'$user_name')")or die(mysql_error());
+                $connection->query("INSERT INTO history (data,action,date,user)VALUES('$article_name', 'Added New Article', NOW(),'$user_name')");
+                echo $connection->error;
 
                 return "successfully uploaded";
 
@@ -127,11 +126,16 @@ $file,$description,$subject,$name){
 
               }
 
-    					}else{
-
-    					$article_file_name='';
-
     					}
+              else{
+    					$article_file_name='';
+              $date=date('y-m-d');
+              $connection->query("insert into aticles (subject,writter,article_name,article_notes,article_file,date,user_name,status,university)
+                    values('$subject','$writter','$article_name','$article_notes','$article_file_name','$date','$user_name','Activated','$university')");
+
+                    return "words uploaded";
+              }
+              return "none";
 
 
 
@@ -139,16 +143,19 @@ $file,$description,$subject,$name){
 
   public static function uploadBook(){
 
-         $university=$_POST['university'];
-	       $user_name=$_POST['user_name'];
-	       $book_category=$_POST['book_category'];
-	       $book_name=mysql_escape_string($_POST['book_name']);
+         $database=new database();
+         $connection=$database->connection;
+
+         $university=mysqli_real_escape_string($connection,$_POST['university']);
+	       $user_name=mysqli_real_escape_string($connection,$_POST['user_name']);
+	       $book_category=mysqli_real_escape_string($connection,$_POST['category']);
+	       $book_name=mysqli_real_escape_string($connection,$_POST['name']);
          $date2=date('y-m-d');
-	       $description=mysql_escape_string($_POST['description']);
+	       $description=mysqli_real_escape_string($connection,$_POST['description']);
 
           /* GETING IDS FOR MAKING DIFFERENCE IN CONTENTS */
-      	  $result_get=mysql_query("select * from books ORDER BY `id` DESC");
-      	  $get_row=mysql_fetch_array($result_get);
+      	  $result_get=$connection->query("select * from books ORDER BY `id` DESC");
+      	  $get_row=$result_get->fetch_array();
       	  $last_id=$get_row['id'];
       	  $next_id=$last_id+1;
       	  $new_id='DESAPOINT_'.$next_id.'_';
@@ -157,27 +164,31 @@ $file,$description,$subject,$name){
 					$uploaded_book_name= addslashes($new_id.$_FILES['uploaded_book']['name']);
 					$uploaded_book_size= getimagesize($_FILES['uploaded_book']['tmp_name']);
 
-					move_uploaded_file($_FILES["uploaded_book"]["tmp_name"],"books/" .$new_id.$_FILES["uploaded_book"]["name"]);
-					$location="books/" .$new_id.$_FILES["uploaded_book"]["name"];
+					if(move_uploaded_file($_FILES["uploaded_book"]["tmp_name"],"books/" .$new_id.$_FILES["uploaded_book"]["name"])){
 
-        	$result=mysql_query("select * from books_category where category='$book_category'");
-        	$row=mysql_fetch_array($result);
-        	$category_id=$row['id'];
-        	$number_books=$row['number_books'];
+            $location="books/" .$new_id.$_FILES["uploaded_book"]["name"];
 
-          $number_books2=$number_books+1;
+          	$result=$connection->query("select * from books_category where category='$book_category'");
+          	$row=$result->fetch_array();
+          	$category_id=$row['id'];
+          	$number_books=$row['number_books'];
 
-	        mysql_query("insert into books (book_category,book_name,description,uploaded_book,user_name,date,university,status)
-			  	values('$book_category','$book_name','$description','$uploaded_book_name','$user_name','$date2','$university','Activated')") or die(mysql_error());
+            $number_books2=$number_books+1;
 
-											mysql_query("update books_category set
-          number_books='$number_books2'
-          where id='$category_id'")or die(mysql_query);
+  	        $connection->query("insert into books (book_category,book_name,description,uploaded_book,user_name,date,university,status)
+  			  	values('$book_category','$book_name','$description','$uploaded_book_name','$user_name','$date2','$university','Activated')");
 
+  					$connection->query("update books_category set number_books='$number_books2'where id='$category_id'");
 
-	         mysql_query("INSERT INTO history (data,action,date,user)VALUES('$book_name', 'Added New Book', NOW(),'$user_name')")or die(mysql_error());
+  	        $connection->query("INSERT INTO history (data,action,date,user)VALUES('$book_name', 'Added New Book', NOW(),'$user_name')");
 
+            return "success";
 
+          }else{
+
+            return "none";
+
+          }
 
 
   }
