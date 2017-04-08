@@ -11,16 +11,15 @@ $file,$description,$subject,$name){
             $database=new Database();
             $connection=$database->connection;
 
-
             $categoryQuerry="SELECT * FROM cr WHERE User_id='$user_id'";
 
             $categoryQuerryResulset=$connection->query($categoryQuerry);
             $rowReturned=$categoryQuerryResulset->num_rows;
 
             if($rowReturned==0){
-                $category="Other Notes by ".$username;
+                $category="Other Notes by (".$username.")";
             }else{
-                $category="Official Notes From CR ".$username;
+                $category="Official Notes From CR (".$username.")";
             }
 
             $user_name=$username;
@@ -59,7 +58,7 @@ $file,$description,$subject,$name){
             $notes_upload_size= getimagesize($_FILES['notes_upload']['tmp_name']);
 
             if(move_uploaded_file(
-              $file["tmp_name"],"notes/" .$new_id. $_FILES["notes_upload"]["name"])){
+              $file["tmp_name"],"../notes/" .$new_id. $_FILES["notes_upload"]["name"])){
 
                     $location="notes/" .$new_id. $_FILES["notes_upload"]["name"];
                     $result=$database->connection->query("select * from subjects where subject='$subject'");
@@ -106,7 +105,7 @@ $file,$description,$subject,$name){
 
               $location="none";
 
-              if(move_uploaded_file($_FILES["article_file"]["tmp_name"],"articles/" . $_FILES["article_file"]["name"])){
+              if(move_uploaded_file($_FILES["article_file"]["tmp_name"],"../articles/" . $_FILES["article_file"]["name"])){
                 $location="articles/" . $_FILES["article_file"]["name"];
                 $date=date('y-m-d');
 
@@ -164,7 +163,7 @@ $file,$description,$subject,$name){
 					$uploaded_book_name= addslashes($new_id.$_FILES['uploaded_book']['name']);
 					$uploaded_book_size= getimagesize($_FILES['uploaded_book']['tmp_name']);
 
-					if(move_uploaded_file($_FILES["uploaded_book"]["tmp_name"],"books/" .$new_id.$_FILES["uploaded_book"]["name"])){
+					if(move_uploaded_file($_FILES["uploaded_book"]["tmp_name"],"../books/" .$new_id.$_FILES["uploaded_book"]["name"])){
 
             $location="books/" .$new_id.$_FILES["uploaded_book"]["name"];
 

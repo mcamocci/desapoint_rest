@@ -5,15 +5,15 @@ class Database{
     var $connection;
     //$host="localhost",$username="root",$password="haikarose",$database="desapoint"
 
-  /*  function __construct($host="localhost",
+    function __construct($host="localhost",
     $username="desapoint",$password="ricrde0703037",$database="desapoin_udsis"){
         $this->connection=new mysqli($host,$username,$password,$database);
-    }*/
+    }
 
-    function __construct($host="localhost",$username="root",
+    /*function __construct($host="localhost",$username="root",
     $password="haikarose",$database="desapoint"){
         $this->connection=new mysqli($host,$username,$password,$database);
-    }
+    }*/
 
 
     public function getPassword($fullname,$phone){
