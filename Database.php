@@ -99,7 +99,7 @@ class Database{
     public function getPastPapers($subject){
 
           $querry="SELECT exam_file as file_url, topic as name , lecture as description
-          FROM pastpapers where subject='$subject' order by id desc;";
+          FROM pastpapers where subject='$subject' order by id;";
           $pastpapers=array();
           $resultset=$this->connection->query($querry);
           while($row=$resultset->fetch_assoc()){
@@ -179,7 +179,7 @@ class Database{
     public function getArticles($category){
 
           $querry="SELECT article_name as name,article_notes as description,article_file as
-           file_url ,status FROM aticles WHERE aticles.subject='$category' ORDER BY id DESC;";
+           file_url ,use_name FROM aticles WHERE aticles.subject='$category' ORDER BY id DESC;";
 
           $resultset=$this->connection->query($querry);
           $articles=array();
@@ -196,7 +196,7 @@ class Database{
     public function getBooks($category){
 
       $querry="SELECT book_name as name,description,uploaded_book as file_url
-      ,status FROM books WHERE books.book_category='$category' ORDER BY id DESC;";
+      ,user_name FROM books WHERE books.book_category='$category' ORDER BY id DESC;";
       $books=array();
       $resultset=$this->connection->query($querry);
       while($row=$resultset->fetch_assoc()){
