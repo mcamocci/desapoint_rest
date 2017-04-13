@@ -179,7 +179,7 @@ class Database{
     public function getArticles($category){
 
           $querry="SELECT article_name as name,article_notes as description,article_file as
-           file_url ,use_name as status FROM aticles WHERE aticles.subject='$category' ORDER BY id DESC;";
+           file_url ,user_name as status FROM aticles WHERE aticles.subject='$category' ORDER BY id DESC;";
 
           $resultset=$this->connection->query($querry);
           $articles=array();
